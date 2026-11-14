@@ -1,0 +1,20 @@
+Third-party components retain their own licenses. No ownership or relicensing of
+vendor code or model weights is implied by this shared lab package.
+
+Cellpose / Cellpose-SAM: https://github.com/MouseLand/cellpose
+Installation: https://cellpose.readthedocs.io/en/latest/installation.html
+Separately provisioned model files: cpsam_v2, cyto3, nucleitorch_0, copied from the working prototype.
+Exact Python versions are recorded in source/requirements-cellpose*-lock.txt.
+
+CellProfiler 4.2.8: https://cellprofiler.org/releases
+Source and license: https://github.com/CellProfiler/CellProfiler
+Separately provisioned archive: original CellProfiler-macOS-4.2.8.zip from the prototype runtime.
+
+Eclipse Temurin Java 8 JRE: https://adoptium.net/
+Separately provisioned archive: original temurin-jre.tar.gz, containing jdk8u504-b01-jre.
+Vendor license and notice files remain inside the runtime archives.
+
+NumPy, SciPy, PyTorch, Pillow, tifffile, jsonschema and other Python dependencies
+are installed from PyPI with their distribution licenses and metadata intact.
+No general-purpose open-source license is assigned to the lab-authored application
+by this release. Obtain lab authorization before redistribution outside the lab.

@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.1.0",
+  "status": "Initial implementation contract; example measurements are synthetic.",
+  "primary_key": "observation_uid",
+  "unique_keys": [
+    [
+      "run_uid",
+      "image_uid",
+      "cell_uid"
+    ],
+    [
+      "run_uid",
+      "mask_relative_path",
+      "mask_label"
+    ]
+  ],
+  "identity_rules": [
+    "cell_uid persists across frames and compatible reruns through an explicit identity mapping; never regenerate identities from mask labels.",
+    "A biological division ends the parent track and starts new daughter tracks. Segmentation splits/merges are QC events until biological division is established.",
+    "lineage_code is scoped by experiment_uid and sequence_uid. L identifies the observed lineage; B is a unique branch number within the sequence. G00 means observed founder, not confirmed seeded.",
+    "Track fragments and unknown ancestry remain unresolved; do not invent parents.",
+    "On track merge/split corrections, retain an identity reconciliation log with superseded UID, replacement UID(s), reason and revision."
+  ],
+  "cross_row_validation": [
+    "Parent and root UIDs must reference cells in the same experiment and sequence; roots reference themselves.",
+    "Parent graphs must be acyclic. Daughters have parent.generation + 1 and inherit the lineage root.",
+    "A confirmed parent must precede the daughter in time; inconsistent overlaps are flagged for review.",
+    "A root has generation 0 and null parent; daughter status requires a known parent.",
+    "CellProfiler object-to-mask mapping must be verified one-to-one before measurements are joined.",
+    "Feature keys must be registered in the feature dictionary; units and channel mappings must match the run.",
+    "Acquired_at is null exactly when acquisition_time_source is unknown.",
+    "Stable cell-level lineage fields agree across observations of the same cell within a lineage revision.",
+    "Hardware/software fields and their provenance agree for all cell observations of the same image in a run.",
+    "Each hardware/software field has provenance; a null value has source unknown. A populated value has a non-unknown source.",
+    "Embedded and sidecar metadata conflicts must be recorded in the image metadata output and flagged for review, never silently overwritten. User corrections retain original evidence."
+  ],
+  "run_manifest_required_fields": [
+    "run_uid",
+    "schema_version",
+    "dataset_uid",
+    "dataset_root",
+    "experiment_uid",
+    "profile_id",
+    "profile_configuration",
+    "input_image_manifest_with_checksums",
+    "channel_mapping",
+    "cellpose_version",
+    "cellpose_model_identifier_and_checksum",
+    "segmentation_parameters",
+    "cellprofiler_version",
+    "cellprofiler_pipeline_path_and_checksum",
+    "tracking_method_and_version",
+    "tracking_parameters",
+    "feature_dictionary_path",
+    "started_at",
+    "completed_at",
+    "run_status",
+    "metadata_extractor_name_and_version",
+    "metadata_mapping_version",
+    "image_metadata_path"
+  ],
+  "outputs": {
+    "canonical": "cell_observations.jsonl",
+    "flat_table": "cell_observations.csv",
+    "feature_metadata": "feature_dictionary.json",
+    "provenance": "run_manifest.json",
+    "identity_corrections": "identity_reconciliation.jsonl when applicable",
+    "image_metadata": "image_metadata.jsonl (per-image normalized metadata, raw metadata reference, extraction status and conflicts; includes images with zero cells)"
+  },
+  "csv_rules": [
+    "UTF-8, header row, comma delimiter and quoted fields as needed.",
+    "Scalar fields retain their names; features flatten to feature.<registered_key> columns.",
+    "qc_flags and tags are JSON-encoded cells.",
+    "Null scalar/feature values are empty CSV cells; zero is 0. Empty arrays/objects are []/{}.",
+    "Date and time are stored together in acquired_at to preserve offset; separate date/time display columns may be derived.",
+    "feature dictionaries may grow; unavailable features are null, and units are never inferred from names alone.",
+    "imaging_metadata_provenance is a JSON-encoded CSV cell. Hardware/software scalar fields are ordinary columns."
+  ],
+  "scope_notes": [
+    "This schema reserves prediction fields; it does not implement a predictor.",
+    "Lineage requires time-series evidence or supplied annotations.",
+    "Full feature selection and channel-specific measurements will be finalized with sample images and a CellProfiler pipeline.",
+    "Per-image aggregate QC and run failures belong in image/run outputs, including images with zero detected cells.",
+    "Imaging metadata fields are placeholders for the future importer; extraction is not yet implemented. Availability depends on the exported image/sidecar contents.",
+    "Do not fill hardware/software fields from imaging_source or a default profile. User-supplied values must be explicitly attributed."
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "dataset_path": "",
+  "imaging_profile": "existing_system",
+  "initial_image_limit": 0,
+  "last_import": "",
+  "register_fiducial": true,
+  "segmentation_options": {
+    "diameter": 0,
+    "flow_threshold": 0.4,
+    "cellprob_threshold": 0,
+    "tile_norm_blocksize": 0,
+    "niter": 0,
+    "model": "cpsam_v2"
+  },
+  "web_port": 8766,
+  "time_series_port": 8767
+}

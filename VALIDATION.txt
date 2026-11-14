@@ -1,0 +1,7 @@
+Prepared 2026-11-13 from the optimized working source.
+Python syntax compilation passed. External model and native runtime asset hashes verified using Python 3.11.
+Tests are split by runtime: core excludes SciPy-only between-well tests; legacy Cellpose preprocessing tests must use the legacy environment, not Cellpose-SAM.
+JavaScript tests were not run: Node.js is not installed in the current shell.
+A fresh full dependency installation and full image-processing run were not performed. No active jobs or segmentation settings were changed.
+No real experiment data, results, machine-specific job state, environments or runtime binaries are included in Git.
+Core suite: 92 tests, 9 optional-runtime skips, no failures. Between-well statistics: 2 tests passed.

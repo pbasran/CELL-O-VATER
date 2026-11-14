@@ -1,0 +1,33 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const elements=new Map();
+function element(id){if(!elements.has(id))elements.set(id,{textContent:'',value:'0',checked:true,disabled:false,hidden:false,dataset:{},classList:{toggle(){},remove(){},add(){}},setAttribute(){},removeAttribute(){},addEventListener(){},scrollIntoView(){},replaceChildren(){},append(){}});return elements.get(id);}
+let respond,job={status:'complete',manifest:{summary:{error_files:0}}};
+const context=vm.createContext({console,AbortController,Date,Promise,Number,Error,JSON,setInterval(){},setTimeout:(fn,ms)=>{const t=setTimeout(fn,ms);if(ms===20000)t.unref();return t;},clearTimeout,document:{getElementById:element,createElement:()=>element('new')},fetch:(path)=>path==='/api/config'?new Promise(()=>{}):path.startsWith('/api/jobs/')?Promise.resolve({ok:true,json:async()=>job}):new Promise(r=>respond=r)});
+vm.runInContext(fs.readFileSync('web/app.js','utf8'),context);
+vm.runInContext("config={token:'test'}; renderResults=()=>{}",context);
+element('segment-on-import').checked=false;
+element('dataset-path').value='/test';
+(async()=>{
+ const task=vm.runInContext('startImport()',context);
+ assert.equal(element('activity-title').textContent,'Starting…');
+ assert.equal(element('activity').dataset.state,'running');
+ assert.equal(element('rerun-segmentation').disabled,true);
+ respond({ok:true,json:async()=>({id:'test'})});await task;
+ assert.equal(element('activity-title').textContent,'Import complete — segmentation not started');
+ assert.equal(element('run').disabled,false);
+ const failed=vm.runInContext('startImport()',context);
+ respond({ok:false,json:async()=>({error:'Grouping failed before fiducial detection'})});await failed;
+ assert.equal(element('activity').dataset.state,'error');
+ assert.match(element('status').textContent,/Grouping failed/);
+ assert.equal(element('run').disabled,false);
+ job={status:'running',started_at:Date.now()/1000,progress:{stage:'segmenting',completed:1,total:3,message:'Segmenting image 2'}};
+ vm.runInContext('setBusy(true)',context);
+ const running=vm.runInContext("followJob({id:'test'})",context);
+ await new Promise(r=>setImmediate(r));
+ assert.equal(element('activity-title').textContent,'Segmenting');
+ assert.match(element('activity-detail').textContent,/1 of 3/);
+ job={status:'complete',manifest:{summary:{}},segmentation:{object_count:3,images:[{},{},{}],published_directory:'/results'}};
+ await running;
+ assert.equal(element('activity-title').textContent,'Processing complete');
+ console.log('Activity UI: immediate click feedback, import-only completion, visible failure and button recovery passed.');
+})().catch(e=>{console.error(e);process.exitCode=1;});

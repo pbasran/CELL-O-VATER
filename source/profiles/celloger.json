@@ -1,0 +1,45 @@
+{
+  "profile_id": "celloger-v1",
+  "imaging_source": "celloger",
+  "validation_status": "awaiting_sample_exports",
+  "description": "Unconfigured profile. No manufacturer settings or filename conventions are assumed.",
+  "detection_rules": [
+    {
+      "field": "imaging_device_model",
+      "pattern": "celloger"
+    },
+    {
+      "field": "imaging_device_name",
+      "pattern": "celloger"
+    },
+    {
+      "field": "tiff_software",
+      "pattern": "celloger"
+    }
+  ],
+  "metadata_mappings": [],
+  "calibration_um": {
+    "x": null,
+    "y": null,
+    "z": null
+  },
+  "channels": {
+    "segmentation": null,
+    "measurement": [],
+    "segmentation_file_channel": null
+  },
+  "grouping": {
+    "filename_pattern": null,
+    "frame_index_base": 0,
+    "expected_file_channels": []
+  },
+  "timing": {
+    "frame_interval_s": null
+  },
+  "analysis_defaults": {
+    "cellpose_model": null,
+    "cell_diameter_px": null,
+    "analysis_dimension": null,
+    "cellprofiler_pipeline": null
+  }
+}

@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict');
+const {timelineSeries}=require('../web/time-course.js');
+const images=[['a','A1','x','2026-10-04T10:00:00'],['b','B2','x','2026-10-04T10:01:00'],['c','A1','y','2026-10-05T14:00:00']].map(([image_uid,well_id,export_path,time])=>({image_uid,well_id,export_path,time,field_id:'0',cell_count:4}));
+const observations=[0,2,4,''].map(v=>({image_uid:'a',F:v})).concat([{image_uid:'c',F:'NaN'},{image_uid:'b',F:100}]);
+let r=timelineSeries({images,observations},'F','mean','0',['A'],['1','2']);assert.equal(r.lines.length,1);assert.equal(r.lines[0].points[0].value,2);assert.equal(r.lines[0].points[0].n,3);assert.equal(r.lines[0].points[1].value,null);assert.equal(r.lines[0].points[1].hours,28);
+r=timelineSeries({images,observations},'cell_count','mean','0',['A','B'],['1','2']);assert.equal(r.lines.length,2);assert.equal(r.lines[0].points[1].value,4);
+assert.equal(timelineSeries({images,observations},'F','median','0',[],['1']).lines.length,0);
+console.log('Time-course aggregation, filtering, missing values and elapsed times passed.');
+images[0].coverage_percent=0;images[0].segmented_cell_area_px2=0;
+r=timelineSeries({images,observations},'coverage_percent','mean','0',['A'],['1']);assert.equal(r.lines[0].points[0].value,0);assert.equal(r.lines[0].points[1].value,null);assert.equal(r.lines[0].points[0].n,null);
+images[0].segmented_cell_area_px2=250;r=timelineSeries({images,observations},'segmented_cell_area_px2','median','0',['A'],['1']);assert.equal(r.lines[0].points[0].value,250);

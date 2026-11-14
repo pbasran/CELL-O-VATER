@@ -1,0 +1,311 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "profile_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "imaging_source": {
+      "enum": [
+        "existing_system",
+        "celloger"
+      ]
+    },
+    "validation_status": {
+      "enum": [
+        "awaiting_sample_exports",
+        "validated_on_representative_exports"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "detection_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "enum": [
+              "imaging_device_name",
+              "imaging_device_manufacturer",
+              "imaging_device_model",
+              "imaging_device_serial_number",
+              "imaging_device_hardware_revision",
+              "imaging_device_firmware_version",
+              "acquisition_software_name",
+              "acquisition_software_version",
+              "acquisition_software_build",
+              "camera_manufacturer",
+              "camera_model",
+              "camera_serial_number",
+              "objective_model",
+              "tiff_software"
+            ]
+          },
+          "pattern": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "field",
+          "pattern"
+        ]
+      }
+    },
+    "metadata_mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source": {
+            "enum": [
+              "sidecar_json",
+              "tiff_description_json"
+            ]
+          },
+          "path": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "field": {
+            "enum": [
+              "imaging_device_name",
+              "imaging_device_manufacturer",
+              "imaging_device_model",
+              "imaging_device_serial_number",
+              "imaging_device_hardware_revision",
+              "imaging_device_firmware_version",
+              "acquisition_software_name",
+              "acquisition_software_version",
+              "acquisition_software_build",
+              "camera_manufacturer",
+              "camera_model",
+              "camera_serial_number",
+              "objective_model"
+            ]
+          }
+        },
+        "required": [
+          "source",
+          "path",
+          "field"
+        ]
+      }
+    },
+    "calibration_um": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        },
+        "y": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        },
+        "z": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ]
+    },
+    "channels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "segmentation": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "measurement": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
+            ]
+          },
+          "uniqueItems": true
+        },
+        "segmentation_file_channel": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "For separate channel files, the filename channel label used for segmentation."
+        }
+      },
+      "required": [
+        "segmentation",
+        "measurement",
+        "segmentation_file_channel"
+      ]
+    },
+    "grouping": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "filename_pattern": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "frame_index_base": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expected_file_channels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "filename_pattern",
+        "frame_index_base",
+        "expected_file_channels"
+      ]
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "frame_interval_s": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "frame_interval_s"
+      ]
+    },
+    "analysis_defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cellpose_model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cell_diameter_px": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        },
+        "analysis_dimension": {
+          "enum": [
+            "2D",
+            "3D",
+            null
+          ]
+        },
+        "cellprofiler_pipeline": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "cellpose_model",
+        "cell_diameter_px",
+        "analysis_dimension",
+        "cellprofiler_pipeline"
+      ]
+    },
+    "registration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "group_by_well_field": {
+          "type": "boolean"
+        },
+        "field_suffix_status": {
+          "enum": [
+            "provisional",
+            "confirmed"
+          ]
+        }
+      },
+      "required": [
+        "enabled",
+        "group_by_well_field",
+        "field_suffix_status"
+      ]
+    }
+  },
+  "required": [
+    "profile_id",
+    "imaging_source",
+    "validation_status",
+    "description",
+    "detection_rules",
+    "metadata_mappings",
+    "calibration_um",
+    "channels",
+    "grouping",
+    "timing",
+    "analysis_defaults"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Imaging profile v1"
+}
